@@ -1,107 +1,109 @@
 import React from 'react';
-import firebase from 'react-native-firebase';
-import { StyleSheet, Platform, Image, Text, View } from 'react-native';
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Image,
+  Text,
+  View
+} from 'react-native';
+import { GoogleSignin } from 'react-native-google-signin';
+import { SocialIcon } from 'react-native-elements';
+import LoadingOverlay from '../components/LoadingOverlay';
+import config from '../config';
+import { scaleStyleSheet } from '../utils/scaleUIStyle';
+
+const USER_LOGGING_UNDEFINED = 0;
+const USER_NOT_LOGGED_IN = 1;
+const USER_LOGGED_IN = 2;
 
 export default class App extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            // firebase things?
-        };
-    }
+  static navigationOptions = {
+    header: null
+  };
 
-    componentDidMount() {
-        // firebase things?
-    }
+  constructor() {
+    super();
 
-    _signIn() {
-        GoogleSignin.signIn()
-            .then((user) => {
-                console.log('ah du')
+    this.state = {
+      google_ready: false,
+      user_logged_in: USER_LOGGING_UNDEFINED,
+      isLoading: true
+    };
+  }
+
+  componentDidMount() {
+    GoogleSignin.hasPlayServices({ autoResolve: true })
+      .then(() => {
+        GoogleSignin.configure({
+          iosClientId:
+            '815371491076-243sbqkdbs46cgec2kn80a1evmrtqeiq.apps.googleusercontent.com'
+        }).then(() => {
+          this.setState({ google_ready: true });
+          GoogleSignin.currentUserAsync()
+            .then(user => {
+              this.setState({ isLoading: false });
+              if (user) {
                 console.log(user);
-            })
-            .catch((err) => {
-                console.log('WRONG SIGNIN', err);
+                this.setState({ user_logged_in: USER_LOGGED_IN });
+              } else {
+                this.setState({ user_logged_in: USER_NOT_LOGGED_IN });
+              }
             })
             .done();
-    }
+        });
+      })
+      .catch(err => {
+        console.log('Play services error', err.code, err.message);
+      });
+  }
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <GoogleSigninButton
-                    style={{width: 48, height: 48}}
-                    size={GoogleSigninButton.Size.Icon}
-                    color={GoogleSigninButton.Color.Dark}
-                    onPress={() => this._signIn()}/>
-                <Text style={styles.welcome}>
-                    Welcome to the React Native{'\n'}Firebase starter project!
-                </Text>
-                <Text style={styles.instructions}>
-                    To get started, edit App.js
-                </Text>
-                {Platform.OS === 'ios' ? (
-                    <Text style={styles.instructions}>
-                        Press Cmd+R to reload,{'\n'}
-                        Cmd+D or shake for dev menu
-                    </Text>
-                ) : (
-                    <Text style={styles.instructions}>
-                        Double tap R on your keyboard to reload,{'\n'}
-                        Cmd+M or shake for dev menu
-                    </Text>
-                )}
-                <View style={styles.modules}>
-                    <Text style={styles.modulesHeader}>The following Firebase modules are enabled:</Text>
-                    {firebase.admob.nativeModuleExists && <Text style={styles.module}>Admob</Text>}
-                    {firebase.analytics.nativeModuleExists && <Text style={styles.module}>Analytics</Text>}
-                    {firebase.auth.nativeModuleExists && <Text style={styles.module}>Authentication</Text>}
-                    {firebase.crash.nativeModuleExists && <Text style={styles.module}>Crash Reporting</Text>}
-                    {firebase.firestore.nativeModuleExists && <Text style={styles.module}>Cloud Firestore</Text>}
-                    {firebase.messaging.nativeModuleExists && <Text style={styles.module}>Messaging</Text>}
-                    {firebase.perf.nativeModuleExists && <Text style={styles.module}>Performance Monitoring</Text>}
-                    {firebase.database.nativeModuleExists && <Text style={styles.module}>Realtime Database</Text>}
-                    {firebase.config.nativeModuleExists && <Text style={styles.module}>Remote Config</Text>}
-                    {firebase.storage.nativeModuleExists && <Text style={styles.module}>Storage</Text>}
-                </View>
-            </View>
-        );
-    }
+  signInGoogle() {
+    if (
+      !this.state.isLoading & this.state.google_ready &&
+      this.state.user_logged_in != USER_LOGGED_IN
+    )
+      GoogleSignin.signIn()
+        .then(user => {
+          console.log(user);
+          this.setState({ user_logged_in: USER_LOGGED_IN });
+        })
+        .catch(err => {
+          this.setState({ user_logged_in: USER_NOT_LOGGED_IN });
+        })
+        .done();
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={require('../../assets/RNFirebase512x512.png')}
+          style={scaleStyleSheet(styles.logo)}
+        />
+        <SocialIcon
+          style={{ width: config.screen.width * 0.7 }}
+          button
+          title={'Sign In'}
+          type={'facebook'}
+          onPress={() => this.signInGoogle()}
+        />
+        <LoadingOverlay isVisible={this.state.isLoading} />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-    },
-    logo: {
-        height: 80,
-        marginBottom: 16,
-        width: 80,
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
-    modules: {
-        margin: 20,
-    },
-    modulesHeader: {
-        fontSize: 16,
-        marginBottom: 8,
-    },
-    module: {
-        fontSize: 14,
-        marginTop: 4,
-        textAlign: 'center',
-    }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF'
+  },
+  logo: {
+    height: 80,
+    marginBottom: 16,
+    width: 80
+  }
 });
