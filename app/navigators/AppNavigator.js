@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import {StatusBar} from "react-native";
 import {addNavigationHelpers, StackNavigator} from "react-navigation";
 import {connect} from "react-redux";
-import HomeScreen from "../containers/HomeScreen";
-
+import {GoogleSignin} from 'react-native-google-signin';
 import {scaleStyle} from "../utils/scaleUIStyle";
+import HomeScreen from "../containers/HomeScreen";
 
 export const AppNavigator = StackNavigator(
     {
@@ -24,6 +24,22 @@ class AppWithNavigationState extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
+            // play services are available. can now configure library
+            GoogleSignin.configure({
+                // iosClientId: <FROM DEVELOPER CONSOLE>, // only for iOS
+            })
+            .then(() => {
+                // you can now call currentUserAsync()
+                console.log('Google Signin ready!');
+            });
+        })
+        .catch((err) => {
+            console.log("Play services error", err.code, err.message);
+        })
     }
 
     componentWillReceiveProps(nextProps) {

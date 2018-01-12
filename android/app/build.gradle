@@ -151,9 +151,14 @@ dependencies {
         transitive = false
     }
 
+    implementation(project(":react-native-google-signin")){
+        exclude group: "com.google.android.gms" // very important
+    }
+
     // RNFirebase required dependencies
     implementation "com.google.firebase:firebase-core:11.6.0"
     implementation "com.google.android.gms:play-services-base:11.6.0"
+    implementation 'com.google.android.gms:play-services-auth:11.6.0'
 
     // RNFirebase optional dependencies
     implementation "com.google.firebase:firebase-ads:11.6.0"

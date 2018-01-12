@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Platform, Image, Text, View } from 'react-native';
-
 import firebase from 'react-native-firebase';
+import { StyleSheet, Platform, Image, Text, View } from 'react-native';
+import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 export default class App extends React.Component {
     constructor() {
@@ -15,10 +15,26 @@ export default class App extends React.Component {
         // firebase things?
     }
 
+    _signIn() {
+        GoogleSignin.signIn()
+            .then((user) => {
+                console.log('ah du')
+                console.log(user);
+            })
+            .catch((err) => {
+                console.log('WRONG SIGNIN', err);
+            })
+            .done();
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <Image source={require('../../assets/RNFirebase512x512.png')} style={[styles.logo]} />
+                <GoogleSigninButton
+                    style={{width: 48, height: 48}}
+                    size={GoogleSigninButton.Size.Icon}
+                    color={GoogleSigninButton.Color.Dark}
+                    onPress={() => this._signIn()}/>
                 <Text style={styles.welcome}>
                     Welcome to the React Native{'\n'}Firebase starter project!
                 </Text>
