@@ -8,7 +8,6 @@ import {
   View
 } from 'react-native';
 import { GoogleSignin } from 'react-native-google-signin';
-import { SocialIcon } from 'react-native-elements';
 import LoadingOverlay from '../components/LoadingOverlay';
 import config from '../config';
 import { scaleStyleSheet } from '../utils/scaleUIStyle';
@@ -81,13 +80,7 @@ export default class App extends React.Component {
           source={require('../../assets/RNFirebase512x512.png')}
           style={scaleStyleSheet(styles.logo)}
         />
-        <SocialIcon
-          style={{ width: config.screen.width * 0.7 }}
-          button
-          title={'Sign In'}
-          type={'facebook'}
-          onPress={() => this.signInGoogle()}
-        />
+
         <LoadingOverlay isVisible={this.state.isLoading} />
       </View>
     );
