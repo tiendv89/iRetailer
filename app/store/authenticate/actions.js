@@ -32,20 +32,22 @@ export function setGoogleProviderReady(autoLogin = true) {
     if (autoLogin) {
       dispatch(authenticateWithGoogle());
     } else {
-      dispatch(authenticationDone());
+      dispatch(authenticationDone(GOOGLE_PROVIDER));
     }
   };
 }
 
-function authenticationDone() {
+function authenticationDone(provider) {
   return {
-    type: types.AUTHENTICATION_DONE
+    type: types.AUTHENTICATION_DONE,
+    provider: provider
   };
 }
 
-function authenticationError() {
+function authenticationError(provider) {
   return {
-    type: types.AUTHENTICATION_ERROR
+    type: types.AUTHENTICATION_ERROR,
+    provider
   };
 }
 
@@ -85,16 +87,17 @@ export function authenticateWithGoogle() {
                   provider: GOOGLE_PROVIDER,
                   user
                 });
+                dispatch(authenticationDone(GOOGLE_PROVIDER));
               } else {
-                dispatch(authenticationError());
+                dispatch(authenticationError(GOOGLE_PROVIDER));
               }
             }
           );
         } else {
-          dispatch(authenticationDone());
+          dispatch(authenticationDone(GOOGLE_PROVIDER));
         }
       } else {
-        dispatch(authenticationError());
+        dispatch(authenticationError(GOOGLE_PROVIDER));
       }
     });
   };
@@ -103,7 +106,8 @@ export function authenticateWithGoogle() {
 function authenticateWithFirebase(provider, user) {
   return dispatch => {
     dispatch({
-      type: types.FIREBASE_AUTHENTICATING
+      type: types.FIREBASE_AUTHENTICATING,
+      provider
     });
 
     try {

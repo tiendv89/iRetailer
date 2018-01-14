@@ -10,13 +10,12 @@ import {
 } from "react-native";
 import { GoogleSignin } from "react-native-google-signin";
 import LoadingOverlay from "../components/LoadingOverlay";
-import config from "../config";
 import { scaleStyleSheet } from "../utils/scaleUIStyle";
 import IconButton from "../components/IconButton";
-import firebase from "react-native-firebase";
+import { STATE_AUTHENTICATED_DONE } from "../store/authenticate/helper";
 import {
-  setGoogleProviderReady,
-  initializeGoogleProvider
+  initializeGoogleProvider,
+  authenticateWithGoogle
 } from "../store/authenticate/actions";
 
 class App extends React.Component {
@@ -37,22 +36,19 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    for (let provider in nextProps.authenticate) {
+    let done = true;
+    for (let provider_key in nextProps.authenticate) {
+      let provider = nextProps.authenticate[provider_key];
+      if (provider.status < STATE_AUTHENTICATED_DONE) {
+        done = false;
+      }
     }
+
+    this.setState({ isLoading: !done });
   }
 
   signInGoogle() {
-    if (!this.state.isLoading)
-      GoogleSignin.signIn()
-        .then(user => {
-          console.log(user);
-          this.setState({ user_logged_in: USER_LOGGED_IN });
-          this.firebaseAuth(user);
-        })
-        .catch(err => {
-          this.setState({ user_logged_in: USER_NOT_LOGGED_IN });
-        })
-        .done();
+    if (!this.state.isLoading) this.props.dispatch(authenticateWithGoogle());
   }
 
   render() {
@@ -96,4 +92,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect()(App);
+export default connect(mapStateToProps)(App);
