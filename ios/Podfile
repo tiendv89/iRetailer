@@ -21,4 +21,6 @@ target 'Retailer' do
   pod 'Firebase/Messaging'
   pod 'Firebase/RemoteConfig'
   pod 'Firebase/Storage'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
 end
