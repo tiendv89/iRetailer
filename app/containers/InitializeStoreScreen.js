@@ -12,7 +12,7 @@ import {
 import { scaleStyleSheet } from '../utils/scaleUIStyle';
 import fonts from '../utils/fonts';
 import config from '../config';
-import { GOOGLE_PROVIDER } from '../utils/firebase';
+import { createStore } from '../store/store/actions';
 import IconButton from '../components/IconButton';
 
 const STORE_NAME = 0;
@@ -41,7 +41,11 @@ class InitializeStoreScreen extends React.Component {
     }
   }
 
-  onSubmit() {}
+  onSubmit() {
+    this.props.dispatch(
+      createStore('Test Store', '283 Khuong Trung', '0932372636')
+    );
+  }
 
   logout() {}
 

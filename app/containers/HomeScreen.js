@@ -22,8 +22,10 @@ import { GOOGLE_PROVIDER } from '../utils/firebase';
 import {
   initializeGoogleProvider,
   authenticateWithGoogle,
-  getProfile
+  getProfile,
+  setProfile
 } from '../store/authenticate/actions';
+import global from '../global';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -44,28 +46,51 @@ class HomeScreen extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let done = true;
-    for (let provider_key in nextProps.authenticate) {
-      let provider = nextProps.authenticate[provider_key];
+    let authentication = nextProps.authenticate;
+    for (let provider_key in authentication) {
+      let provider = authentication[provider_key];
       if (provider.status < STATE_AUTHENTICATED_DONE) {
         done = false;
       }
     }
 
     if (done) {
-      this.props.dispatch(getProfile(GOOGLE_PROVIDER)).then(data => {
-        const snapshot = data.val();
-        if (snapshot) {
+      // Try to authenticate with Firebase using Google credential first
+      if (authentication[GOOGLE_PROVIDER].status === STATE_AUTHENTICATED_DONE) {
+        this.getFirebaseUser(GOOGLE_PROVIDER);
+      } else if (
+        authentication[GOOGLE_PROVIDER].status === STATE_AUTHENTICATED_ERROR
+      ) {
+        this.setState({ isLoading: !done });
+      }
+    }
+  }
+
+  getFirebaseUser(provider) {
+    let user = this.props.authenticate[GOOGLE_PROVIDER].firebase_user._user;
+    if (global.usingFirebaseAuthentication && user) {
+      this.props.dispatch(getProfile(GOOGLE_PROVIDER)).then(snapshot => {
+        const profile = snapshot.val();
+        this.setState({ isLoading: false });
+        if (profile) {
+          if (profile.stores) {
+          } else {
+            this.createStore();
+          }
         } else {
-          const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: 'InitializeStore' })
-            ]
-          });
-          this.props.navigation.dispatch(resetAction);
+          this.props.dispatch(setProfile(GOOGLE_PROVIDER, user));
+          this.createStore();
         }
       });
     }
+  }
+
+  createStore() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'InitializeStore' })]
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   signIn(provider) {
@@ -74,9 +99,10 @@ class HomeScreen extends React.Component {
       authentication.status === STATE_AUTHENTICATED_ERROR ||
       authentication.status === STATE_INITIALIZED
     ) {
-      if (provider === GOOGLE_PROVIDER)
+      if (provider === GOOGLE_PROVIDER) {
+        this.setState({ isLoading: true });
         this.props.dispatch(authenticateWithGoogle());
-      else Alert.alert('Lỗi', 'Chỉ có google được support!');
+      } else Alert.alert('Lỗi', 'Chỉ có google được support!');
     }
   }
 

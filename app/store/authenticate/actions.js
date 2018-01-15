@@ -140,8 +140,22 @@ export function getProfile(provider) {
 
       return firebase
         .database()
-        .ref(uid + '/profile')
+        .ref('users/' + uid)
         .once('value');
     }
   };
+}
+
+export function setProfile(provider, user) {
+  try {
+    if (global.usingFirebaseAuthentication) {
+      const uid = user.uid;
+      firebase
+        .database()
+        .ref('users/' + uid + '/name')
+        .set(user.displayName);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
