@@ -132,3 +132,16 @@ function authenticateWithFirebase(provider, user) {
     }
   };
 }
+
+export function getProfile(provider) {
+  return (dispatch, getState) => {
+    if (global.usingFirebaseAuthentication) {
+      const uid = getState().authenticate[provider].firebase_user._user.uid;
+
+      return firebase
+        .database()
+        .ref(uid + '/profile')
+        .once('value');
+    }
+  };
+}

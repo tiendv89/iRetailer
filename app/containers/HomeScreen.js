@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
+  Alert,
   TouchableOpacity,
   StyleSheet,
   Platform,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { scaleStyleSheet } from '../utils/scaleUIStyle';
+import { NavigationActions } from 'react-navigation';
 import IconButton from '../components/IconButton';
 import {
   STATE_AUTHENTICATED_DONE,
@@ -19,11 +21,11 @@ import {
 import { GOOGLE_PROVIDER } from '../utils/firebase';
 import {
   initializeGoogleProvider,
-  authenticateWithGoogle
+  authenticateWithGoogle,
+  getProfile
 } from '../store/authenticate/actions';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
-class App extends React.Component {
+class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -49,34 +51,63 @@ class App extends React.Component {
       }
     }
 
-    this.setState({ isLoading: !done });
+    if (done) {
+      this.props.dispatch(getProfile(GOOGLE_PROVIDER)).then(data => {
+        const snapshot = data.val();
+        if (snapshot) {
+        } else {
+          const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({ routeName: 'InitializeStore' })
+            ]
+          });
+          this.props.navigation.dispatch(resetAction);
+        }
+      });
+    }
   }
 
   signIn(provider) {
-    const authentication = this.props.authenticate[GOOGLE_PROVIDER];
+    const authentication = this.props.authenticate[provider];
     if (
       authentication.status === STATE_AUTHENTICATED_ERROR ||
       authentication.status === STATE_INITIALIZED
-    )
-      this.props.dispatch(authenticateWithGoogle());
+    ) {
+      if (provider === GOOGLE_PROVIDER)
+        this.props.dispatch(authenticateWithGoogle());
+      else Alert.alert('Lỗi', 'Chỉ có google được support!');
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={require('../../assets/logo.png')}
-          style={scaleStyleSheet(styles.logo)}
-        />
-        {this.state.isLoading ? null : (
-          <IconButton
-            button
-            title="Google"
-            type="google-plus-official"
-            onPress={() => this.signIn(GOOGLE_PROVIDER)}
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={scaleStyleSheet(styles.logo)}
           />
-        )}
-        <Text>v0.0.1</Text>
+          <Text
+            style={scaleStyleSheet({
+              marginTop: 10,
+              fontSize: 40,
+              fontWeight: 'bold'
+            })}
+          >
+            iRetailer
+          </Text>
+          {this.state.isLoading ? null : (
+            <IconButton
+              style={scaleStyleSheet({ marginTop: 80 })}
+              button
+              title="Google"
+              type="google-plus-official"
+              onPress={() => this.signIn(GOOGLE_PROVIDER)}
+            />
+          )}
+        </View>
+        <Text style={scaleStyleSheet({ fontSize: 17 })}>v0.0.1</Text>
         <LoadingOverlay isVisible={this.state.isLoading} />
       </View>
     );
@@ -91,15 +122,15 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 160,
-    marginVertical: 80,
+    marginTop: 80,
     width: 160
   }
 });
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   return {
     authenticate: state.authenticate
   };
-}
+};
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(HomeScreen);

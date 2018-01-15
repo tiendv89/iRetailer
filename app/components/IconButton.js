@@ -45,6 +45,7 @@ export default class IconButton extends Component {
       iconSize,
       iconColor,
       raised,
+      fontSize,
       onPress
     } = this.props;
     return (
@@ -59,7 +60,7 @@ export default class IconButton extends Component {
             height: iconSize * 2 + 4,
             borderRadius: iconSize * 2
           },
-          { backgroundColor: colors[type] },
+          colors[type] && { backgroundColor: colors[type] },
           light && { backgroundColor: 'white' }
         ]}
         onPress={onPress}
@@ -71,7 +72,13 @@ export default class IconButton extends Component {
         />
         {button &&
           title && (
-            <Text style={[styles.title, light && { color: colors[type] }]}>
+            <Text
+              style={[
+                styles.title,
+                light && { color: colors[type] },
+                fontSize && { fontSize }
+              ]}
+            >
               {title}
             </Text>
           )}
