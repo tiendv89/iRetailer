@@ -1,9 +1,9 @@
-import { GoogleSignin } from "react-native-google-signin";
-import firebase from "react-native-firebase";
-import * as types from "./action-types";
-import { GOOGLE_PROVIDER } from "../../utils/firebase";
-import * as firebase_helpers from "../../utils/firebase";
-import global from "../../global";
+import { GoogleSignin } from 'react-native-google-signin';
+import firebase from 'react-native-firebase';
+import * as types from './action-types';
+import { GOOGLE_PROVIDER } from '../../utils/firebase';
+import * as firebase_helpers from '../../utils/firebase';
+import global from '../../global';
 
 export function initializeGoogleProvider() {
   return dispatch => {
@@ -15,7 +15,7 @@ export function initializeGoogleProvider() {
       .then(() => {
         GoogleSignin.configure({
           iosClientId:
-            "815371491076-243sbqkdbs46cgec2kn80a1evmrtqeiq.apps.googleusercontent.com"
+            '815371491076-243sbqkdbs46cgec2kn80a1evmrtqeiq.apps.googleusercontent.com'
         }).then(() => {
           dispatch(setGoogleProviderReady());
         });
@@ -30,7 +30,7 @@ export function setGoogleProviderReady(autoLogin = true) {
   return dispatch => {
     dispatch(setProviderReady(GOOGLE_PROVIDER));
     if (autoLogin) {
-      dispatch(authenticateWithGoogle());
+      dispatch(authenticateWithGoogle(true));
     } else {
       dispatch(authenticationDone(GOOGLE_PROVIDER));
     }
@@ -65,7 +65,7 @@ function setProviderReady(provider) {
   };
 }
 
-export function authenticateWithGoogle() {
+export function authenticateWithGoogle(silent) {
   return dispatch => {
     dispatch({
       type: types.PROVIDER_AUTHENTICATING,
@@ -79,25 +79,22 @@ export function authenticateWithGoogle() {
           user: user
         });
         if (global.usingFirebaseAuthentication) {
-          dispatch(authenticateWithFirebase(GOOGLE_PROVIDER, user)).then(
-            user => {
-              if (user) {
-                dispatch({
-                  type: types.FIREBASE_AUTHENTICATED,
-                  provider: GOOGLE_PROVIDER,
-                  user
-                });
-                dispatch(authenticationDone(GOOGLE_PROVIDER));
-              } else {
-                dispatch(authenticationError(GOOGLE_PROVIDER));
-              }
-            }
-          );
+          dispatch(authenticateWithFirebase(GOOGLE_PROVIDER, user));
         } else {
           dispatch(authenticationDone(GOOGLE_PROVIDER));
         }
       } else {
-        dispatch(authenticationError(GOOGLE_PROVIDER));
+        if (silent) dispatch(authenticationError(GOOGLE_PROVIDER));
+        else {
+          GoogleSignin.signIn()
+            .then(user => {
+              console.log(user);
+              dispatch(authenticateWithFirebase(GOOGLE_PROVIDER, user));
+            })
+            .catch(err => {
+              dispatch(authenticationError(GOOGLE_PROVIDER));
+            });
+        }
       }
     });
   };
@@ -115,9 +112,23 @@ function authenticateWithFirebase(provider, user) {
         provider,
         user
       );
-      return firebase.auth().signInWithCredential(credential);
+      firebase
+        .auth()
+        .signInWithCredential(credential)
+        .then(user => {
+          if (user) {
+            dispatch({
+              type: types.FIREBASE_AUTHENTICATED,
+              provider: GOOGLE_PROVIDER,
+              user
+            });
+            dispatch(authenticationDone(GOOGLE_PROVIDER));
+          } else {
+            dispatch(authenticationError(GOOGLE_PROVIDER));
+          }
+        });
     } catch (error) {
-      return null;
+      dispatch(authenticationError(GOOGLE_PROVIDER));
     }
   };
 }

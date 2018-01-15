@@ -1,16 +1,16 @@
-import { combineReducers } from "redux";
-import * as types from "./action-types";
+import { combineReducers } from 'redux';
+import * as types from './action-types';
 
 const STATE_UNINITIALIZED = 0;
 const STATE_INITIALIZING = 1;
 const STATE_INITIALIZED_ERROR = 2;
-const STATE_INITIALIZED = 3;
+export const STATE_INITIALIZED = 3;
 const STATE_AUTHENTICATING_WITH_PROVIDER = 4;
 const STATE_AUTHENTICATED_WITH_PROVIDER = 5;
 const STATE_AUTHENTICATING_WITH_FIREBASE = 6;
 const STATE_AUTHENTICATED_WITH_FIREBASE = 7;
 export const STATE_AUTHENTICATED_DONE = 8;
-const STATE_AUTHENTICATED_ERROR = 9;
+export const STATE_AUTHENTICATED_ERROR = 9;
 
 export function createAuthentication(provider) {
   return {

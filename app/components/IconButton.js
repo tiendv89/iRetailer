@@ -1,33 +1,33 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { scaleStyleSheet } from "../utils/scaleUIStyle";
-import config from "../config";
-import fonts from "../utils/fonts";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { scaleStyleSheet } from '../utils/scaleUIStyle';
+import config from '../config';
+import fonts from '../utils/fonts';
 
 const colors = {
-  facebook: "#3b5998",
-  twitter: "#00aced",
-  ["google-plus-official"]: "#dd4b39",
-  pinterest: "#cb2027",
-  linkedin: "#007bb6",
-  youtube: "#bb0000",
-  vimeo: "#aad450",
-  tumblr: "#32506d",
-  instagram: "#517fa4",
-  quora: "#a82400",
-  foursquare: "#0072b1",
-  wordpress: "#21759b",
-  stumbleupon: "#EB4823",
-  github: "#000000",
-  ["github-alt"]: "#000000",
-  twitch: "#6441A5",
-  medium: "#02b875",
-  soundcloud: "#f50",
-  gitlab: "#e14329",
-  angellist: "#1c4082",
-  codepen: "#000000"
+  facebook: '#3b5998',
+  twitter: '#00aced',
+  ['google-plus-official']: '#dd4b39',
+  pinterest: '#cb2027',
+  linkedin: '#007bb6',
+  youtube: '#bb0000',
+  vimeo: '#aad450',
+  tumblr: '#32506d',
+  instagram: '#517fa4',
+  quora: '#a82400',
+  foursquare: '#0072b1',
+  wordpress: '#21759b',
+  stumbleupon: '#EB4823',
+  github: '#000000',
+  ['github-alt']: '#000000',
+  twitch: '#6441A5',
+  medium: '#02b875',
+  soundcloud: '#f50',
+  gitlab: '#e14329',
+  angellist: '#1c4082',
+  codepen: '#000000'
 };
 
 export default class IconButton extends Component {
@@ -60,7 +60,7 @@ export default class IconButton extends Component {
             borderRadius: iconSize * 2
           },
           { backgroundColor: colors[type] },
-          light && { backgroundColor: "white" }
+          light && { backgroundColor: 'white' }
         ]}
         onPress={onPress}
       >
@@ -87,7 +87,7 @@ IconButton.propTypes = {
 
 IconButton.defaultProps = {
   raised: true,
-  iconColor: "white",
+  iconColor: 'white',
   iconSize: 48 * config.UI_SCALE,
   button: false
 };
@@ -98,9 +98,9 @@ const styles = scaleStyleSheet(
       height: 52,
       width: config.screen.width * 0.8,
       borderRadius: 30,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center"
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
     button: {
       paddingTop: 14,
@@ -109,7 +109,7 @@ const styles = scaleStyleSheet(
     raised: {
       ...Platform.select({
         ios: {
-          shadowColor: "rgba(0, 0, 0, .4)",
+          shadowColor: 'rgba(0, 0, 0, .4)',
           shadowOffset: { height: 1, width: 1 },
           shadowOpacity: 1,
           shadowRadius: 1
@@ -120,11 +120,11 @@ const styles = scaleStyleSheet(
       })
     },
     title: {
-      color: "white",
+      color: 'white',
       marginLeft: 15,
       ...Platform.select({
         ios: {
-          fontWeight: "bold"
+          fontWeight: 'bold'
         },
         android: {
           ...fonts.android.black

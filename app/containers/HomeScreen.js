@@ -1,5 +1,5 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -7,16 +7,21 @@ import {
   Image,
   Text,
   View
-} from "react-native";
-import { GoogleSignin } from "react-native-google-signin";
-import LoadingOverlay from "../components/LoadingOverlay";
-import { scaleStyleSheet } from "../utils/scaleUIStyle";
-import IconButton from "../components/IconButton";
-import { STATE_AUTHENTICATED_DONE } from "../store/authenticate/helper";
+} from 'react-native';
+import LoadingOverlay from '../components/LoadingOverlay';
+import { scaleStyleSheet } from '../utils/scaleUIStyle';
+import IconButton from '../components/IconButton';
+import {
+  STATE_AUTHENTICATED_DONE,
+  STATE_AUTHENTICATED_ERROR,
+  STATE_INITIALIZED
+} from '../store/authenticate/helper';
+import { GOOGLE_PROVIDER } from '../utils/firebase';
 import {
   initializeGoogleProvider,
   authenticateWithGoogle
-} from "../store/authenticate/actions";
+} from '../store/authenticate/actions';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class App extends React.Component {
   static navigationOptions = {
@@ -47,15 +52,20 @@ class App extends React.Component {
     this.setState({ isLoading: !done });
   }
 
-  signInGoogle() {
-    if (!this.state.isLoading) this.props.dispatch(authenticateWithGoogle());
+  signIn(provider) {
+    const authentication = this.props.authenticate[GOOGLE_PROVIDER];
+    if (
+      authentication.status === STATE_AUTHENTICATED_ERROR ||
+      authentication.status === STATE_INITIALIZED
+    )
+      this.props.dispatch(authenticateWithGoogle());
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../../assets/RNFirebase512x512.png")}
+          source={require('../../assets/logo.png')}
           style={scaleStyleSheet(styles.logo)}
         />
         {this.state.isLoading ? null : (
@@ -63,9 +73,10 @@ class App extends React.Component {
             button
             title="Google"
             type="google-plus-official"
-            onPress={() => this.signInGoogle()}
+            onPress={() => this.signIn(GOOGLE_PROVIDER)}
           />
         )}
+        <Text>v0.0.1</Text>
         <LoadingOverlay isVisible={this.state.isLoading} />
       </View>
     );
@@ -75,14 +86,13 @@ class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF'
   },
   logo: {
-    height: 80,
-    marginBottom: 16,
-    width: 80
+    height: 160,
+    marginVertical: 80,
+    width: 160
   }
 });
 
