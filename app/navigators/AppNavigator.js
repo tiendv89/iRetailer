@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import { scaleStyle } from '../utils/scaleUIStyle';
 import HomeScreen from '../containers/HomeScreen';
 import InitializeStoreScreen from '../containers/InitializeStoreScreen';
+import MainScreen from '../containers/MainScreen';
 
 export const AppNavigator = StackNavigator(
   {
     Home: { screen: HomeScreen },
-    InitializeStore: { screen: InitializeStoreScreen }
+    InitializeStore: { screen: InitializeStoreScreen },
+    Main: { screen: MainScreen }
   },
   {
     initialRouteName: 'Home',

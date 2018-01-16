@@ -4,16 +4,15 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  Platform,
-  Image,
   Text,
   View
 } from 'react-native';
 import { scaleStyleSheet } from '../utils/scaleUIStyle';
 import fonts from '../utils/fonts';
 import config from '../config';
-import { createStore } from '../store/store/actions';
+import { createStore } from '../store/stores/actions';
 import IconButton from '../components/IconButton';
+import { NavigationActions } from 'react-navigation';
 
 const STORE_NAME = 0;
 const STORE_ADDRESS = 1;
@@ -32,6 +31,24 @@ class InitializeStoreScreen extends React.Component {
     this.state = {
       activeInput: -1
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const current_store = this.props.stores.current_store;
+    if (
+      nextProps.stores.current_store &&
+      (!current_store || current_store !== nextProps.stores.current_store)
+    ) {
+      this.goToMainPage();
+    }
+  }
+
+  goToMainPage() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Main' })]
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   deactivateInput() {
@@ -116,7 +133,9 @@ class InitializeStoreScreen extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    stores: state.stores
+  };
 };
 
 const styles = StyleSheet.create({

@@ -74,6 +74,7 @@ class HomeScreen extends React.Component {
         this.setState({ isLoading: false });
         if (profile) {
           if (profile.stores) {
+            this.goToMainPage();
           } else {
             this.createStore();
           }
@@ -83,6 +84,14 @@ class HomeScreen extends React.Component {
         }
       });
     }
+  }
+
+  goToMainPage() {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Main' })]
+    });
+    this.props.navigation.dispatch(resetAction);
   }
 
   createStore() {

@@ -88,7 +88,6 @@ export function authenticateWithGoogle(silent) {
         else {
           GoogleSignin.signIn()
             .then(user => {
-              console.log(user);
               dispatch(authenticateWithFirebase(GOOGLE_PROVIDER, user));
             })
             .catch(err => {

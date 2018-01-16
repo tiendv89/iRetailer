@@ -32,9 +32,35 @@ export function createStore(name, address, phone) {
         storeArr.push(store_id);
         user_ref.set(storeArr);
         dispatch({
-          type: types.CREATE_STORE_SUCCESSFULLY
+          type: types.CREATE_STORE_SUCCESSFULLY,
+          id: store_id
         });
       });
     };
   }
+}
+
+export function getStoreDetail() {
+  return (dispatch, getState) => {
+    const id = getState().stores.current_store;
+
+    firebase
+      .database()
+      .ref('stores/' + id)
+      .once('value')
+      .then(snapshot => {
+        const store = snapshot.val();
+        if (store) {
+          dispatch({
+            type: types.RETRIEVE_STORE_DETAIL_SUCCESSFULLY,
+            id,
+            store
+          });
+        } else {
+          dispatch({
+            type: types.RETRIEVE_STORE_DETAIL_FAILED
+          });
+        }
+      });
+  };
 }
