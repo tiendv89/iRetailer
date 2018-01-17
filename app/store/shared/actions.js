@@ -22,6 +22,15 @@ export function createStore(path, data) {
 
       let id = ref.key;
 
+      dispatch({
+        type:
+          path === 'shops'
+            ? types.CREATE_STORE_SUCCESSFULLY
+            : types.CREATE_BRANCH_SUCCESSFULLY,
+        id: id,
+        data: pushData
+      });
+
       const user_ref = firebase
         .database()
         .ref('users')
@@ -32,15 +41,21 @@ export function createStore(path, data) {
         let arr = snapshot.val() ? JSON.parse(snapshot.val()) : [];
         arr.push(id);
         user_ref.set(arr);
-        dispatch({
-          type:
-            path === 'shops'
-              ? types.CREATE_STORE_SUCCESSFULLY
-              : types.CREATE_BRANCH_SUCCESSFULLY,
-          id: id,
-          data: pushData
-        });
       });
+
+      if (path === 'shops' && data.branch) {
+        const branch_ref = firebase
+          .database()
+          .ref('branches')
+          .child(data.branch)
+          .child('shops');
+
+        branch_ref.once('value', snapshot => {
+          let arr = snapshot.val() ? JSON.parse(snapshot.val()) : [];
+          arr.push(id);
+          branch_ref.set(arr);
+        });
+      }
     };
   }
 }

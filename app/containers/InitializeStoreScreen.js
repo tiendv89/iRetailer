@@ -87,9 +87,10 @@ class InitializeStoreScreen extends React.Component {
   goToMainPage() {
     const resetAction = NavigationActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Main' })]
+      actions: [NavigationActions.navigate({ routeName: 'Retailer' })]
     });
     this.props.navigation.dispatch(resetAction);
+    this.props.navigation.navigate('Main');
   }
 
   deactivateInput() {
@@ -103,14 +104,17 @@ class InitializeStoreScreen extends React.Component {
     this.props.dispatch(createStore('branches', { name: 'Test Branch' }));
   }
 
-  onSkipBranch() {}
+  onSkipBranch() {
+    this.setState({ createBranch: false });
+  }
 
   onSubmit() {
     this.props.dispatch(
-      createStore('stores', {
-        name: 'Test Store',
-        address: '283 Khuong Trung',
-        phone: '0932372636'
+      createStore('shops', {
+        name: 'Hải sản Phong Lan',
+        address: '5 ngõ 67 Thái Thịnh',
+        phone: '0914686368',
+        branch: this.props.branches.current_branch
       })
     );
   }

@@ -43,54 +43,50 @@ class BranchManagementScreen extends React.Component {
     }
   }
 
+  onStoreAdd() {
+    this.props.navigation.navigate('InitializeStore', { createBranch: false });
+  }
+
+  renderPanel(color, label, detail, onPress) {
+    let Component = onPress ? TouchableOpacity : View;
+    return (
+      <Component
+        onPress={() => onPress()}
+        style={scaleStyleSheet([
+          styles.panel,
+          { borderColor: color, backgroundColor: color }
+        ])}
+      >
+        <Text style={scaleStyleSheet(styles.label)}>{label}</Text>
+        <Text style={scaleStyleSheet([styles.detail, fonts.android.bold])}>
+          {detail}
+        </Text>
+      </Component>
+    );
+  }
+
   render() {
     let brand = this.props.branches[this.props.branches.current_branch];
     return (
       <View style={styles.container}>
         {brand && !brand.error ? (
           <View>
-            <View
-              style={scaleStyleSheet([
-                styles.panel,
-                { borderColor: '#517fa4' }
-              ])}
-            >
-              <Text
-                style={scaleStyleSheet([styles.label, { color: '#517fa4' }])}
-              >
-                Thương hiệu
-              </Text>
-              <Text
-                style={scaleStyleSheet([
-                  styles.detail,
-                  { color: '#517fa4' },
-                  fonts.android.bold
-                ])}
-              >
-                {brand.name}
-              </Text>
-            </View>
-            <View
-              style={scaleStyleSheet([
-                styles.panel,
-                { borderColor: '#aad450' }
-              ])}
-            >
-              <Text
-                style={scaleStyleSheet([styles.label, { color: '#aad450' }])}
-              >
-                Doanh thu
-              </Text>
-              <Text
-                style={scaleStyleSheet([
-                  styles.detail,
-                  { color: '#aad450' },
-                  fonts.android.bold
-                ])}
-              >
-                {utils.numberWithCommas(1000000) + '\u20ab'}
-              </Text>
-            </View>
+            {this.renderPanel('#517fa4', 'Thương hiệu', brand.name)}
+            {this.renderPanel(
+              '#aad450',
+              'Doanh thu',
+              utils.numberWithCommas(1000000) + '\u20ab'
+            )}
+            {this.renderPanel(
+              '#cb2027',
+              'Cửa hàng',
+              this.props.branch.shops && this.props.branch.shops.length
+                ? this.props.branch.shops.length
+                : 0,
+              () => {
+                this.onStoreAdd();
+              }
+            )}
           </View>
         ) : null}
         <LoadingOverlay isVisible={this.state.isLoading} />
@@ -122,10 +118,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 25,
     textAlign: 'left',
+    color: 'white',
     marginBottom: 8
   },
   detail: {
     fontSize: 35,
+    color: 'white',
     textAlign: 'right'
   }
 });

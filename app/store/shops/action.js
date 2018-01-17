@@ -1,25 +1,35 @@
 import * as types from './action-types';
+import firebase from 'react-native-firebase';
 
-export function getStoreDetail() {
+export function getStoreDetail(id) {
   return (dispatch, getState) => {
-    const id = getState().shops.current_shop;
+    let shop_id = id ? id : getState().shops.current_shop;
 
-    if (id) {
+    if (!shop_id) {
+      shop_id = getState().authenticate.profile.shops[0];
+      if (shop_id)
+        dispatch({
+          type: types.SET_CURRENT_SHOP,
+          id: shop_id
+        });
+    }
+    if (shop_id) {
       firebase
         .database()
-        .ref('shops/' + id)
+        .ref('shops/' + shop_id)
         .once('value')
         .then(snapshot => {
           const shop = snapshot.val();
           if (shop) {
             dispatch({
               type: types.RETRIEVE_STORE_DETAIL_SUCCESSFULLY,
-              id,
+              id: shop_id,
               shop
             });
           } else {
             dispatch({
-              type: types.RETRIEVE_STORE_DETAIL_FAILED
+              type: types.RETRIEVE_STORE_DETAIL_FAILED,
+              id: shop_id
             });
           }
         });

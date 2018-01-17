@@ -14,10 +14,9 @@ import firebase from 'react-native-firebase';
 import { getStoreDetail } from '../store/shops/action';
 import { Icon } from 'react-native-elements';
 
-class MainScreen extends React.Component {
+class ProductManagementScreen extends React.Component {
   static navigationOptions = {
-    drawerLabel: 'Cửa hàng',
-    drawerIcon: ({ tintColor }) => <Icon name={'store'} />
+    header: null
   };
 
   constructor(props) {
@@ -30,31 +29,10 @@ class MainScreen extends React.Component {
 
   componentWillReceiveProps(nextProps) {}
 
-  renderPanel(color, label, detail, onPress) {
-    let Component = onPress ? TouchableOpacity : View;
-    return (
-      <Component
-        onPress={() => onPress()}
-        style={scaleStyleSheet([
-          styles.panel,
-          { borderColor: color, backgroundColor: color }
-        ])}
-      >
-        <Text style={scaleStyleSheet(styles.label)}>{label}</Text>
-        <Text style={scaleStyleSheet([styles.detail, fonts.android.bold])}>
-          {detail}
-        </Text>
-      </Component>
-    );
-  }
-
   render() {
     return (
       <View style={styles.container}>
-        {this.renderPanel('#517fa4', 'Sản phẩm', '0', () => {
-          this.props.navigation.navigate('Product');
-          this.props.navigation.navigate('ProductManagement');
-        })}
+        <Text>ProductManagement</Text>
       </View>
     );
   }
@@ -88,4 +66,4 @@ const mapStateToProps = state => {
   return {};
 };
 
-export default connect(mapStateToProps)(MainScreen);
+export default connect(mapStateToProps)(ProductManagementScreen);

@@ -6,11 +6,13 @@ import { scaleStyle } from '../utils/scaleUIStyle';
 import HomeScreen from '../containers/HomeScreen';
 import InitializeStoreScreen from '../containers/InitializeStoreScreen';
 import RetailerWithNavigationState from '../navigators/RetailerNavigator';
+import ProductWithNavigationState from '../navigators/ProductNavigator';
 export const AppNavigator = StackNavigator(
   {
     Home: { screen: HomeScreen },
     InitializeStore: { screen: InitializeStoreScreen },
-    Retailer: { screen: RetailerWithNavigationState }
+    Retailer: { screen: RetailerWithNavigationState },
+    Product: { screen: ProductWithNavigationState }
   },
   {
     initialRouteName: 'Home',

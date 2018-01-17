@@ -77,6 +77,7 @@ class HomeScreen extends React.Component {
       this.props.dispatch(getProfile(GOOGLE_PROVIDER)).then(snapshot => {
         const profile = snapshot.val();
         this.setState({ isLoading: false });
+        console.log(profile);
         if (profile) {
           this.props.dispatch(saveProfile(profile));
           if (profile.shops) {
@@ -99,7 +100,7 @@ class HomeScreen extends React.Component {
       index: 0,
       actions: [NavigationActions.navigate({ routeName: 'Retailer' })]
     });
-    this.props.navigation.dispatch(resetAction);
+    this.props.navigation.dispatch({ ...resetAction, label: 'app' });
     this.props.navigation.navigate('Main');
   }
 
@@ -108,7 +109,7 @@ class HomeScreen extends React.Component {
       index: 0,
       actions: [NavigationActions.navigate({ routeName: 'Retailer' })]
     });
-    this.props.navigation.dispatch(resetAction);
+    this.props.navigation.dispatch({ ...resetAction, label: 'app' });
     this.props.navigation.navigate('BranchManagement');
   }
 
