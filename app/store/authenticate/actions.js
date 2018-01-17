@@ -158,3 +158,10 @@ export function setProfile(provider, user) {
     console.log(error);
   }
 }
+
+export function saveProfile(profile) {
+  return {
+    type: types.SAVE_PROFILE_TO_REDUX,
+    profile
+  };
+}

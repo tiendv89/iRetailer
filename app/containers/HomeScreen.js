@@ -23,7 +23,8 @@ import {
   initializeGoogleProvider,
   authenticateWithGoogle,
   getProfile,
-  setProfile
+  setProfile,
+  saveProfile
 } from '../store/authenticate/actions';
 import global from '../global';
 
@@ -57,7 +58,11 @@ class HomeScreen extends React.Component {
     if (done) {
       // Try to authenticate with Firebase using Google credential first
       if (authentication[GOOGLE_PROVIDER].status === STATE_AUTHENTICATED_DONE) {
-        this.getFirebaseUser(GOOGLE_PROVIDER);
+        if (
+          this.props.authenticate[GOOGLE_PROVIDER].status !=
+          authentication[GOOGLE_PROVIDER].status
+        )
+          this.getFirebaseUser(GOOGLE_PROVIDER);
       } else if (
         authentication[GOOGLE_PROVIDER].status === STATE_AUTHENTICATED_ERROR
       ) {
@@ -73,8 +78,11 @@ class HomeScreen extends React.Component {
         const profile = snapshot.val();
         this.setState({ isLoading: false });
         if (profile) {
-          if (profile.stores) {
+          this.props.dispatch(saveProfile(profile));
+          if (profile.shops) {
             this.goToMainPage();
+          } else if (profile.branches) {
+            this.goToBranchPage();
           } else {
             this.createStore();
           }
@@ -89,15 +97,30 @@ class HomeScreen extends React.Component {
   goToMainPage() {
     const resetAction = NavigationActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Main' })]
+      actions: [NavigationActions.navigate({ routeName: 'Retailer' })]
     });
     this.props.navigation.dispatch(resetAction);
+    this.props.navigation.navigate('Main');
   }
 
-  createStore() {
+  goToBranchPage() {
     const resetAction = NavigationActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'InitializeStore' })]
+      actions: [NavigationActions.navigate({ routeName: 'Retailer' })]
+    });
+    this.props.navigation.dispatch(resetAction);
+    this.props.navigation.navigate('BranchManagement');
+  }
+
+  createStore(createBranch = true) {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'InitializeStore',
+          params: { createBranch }
+        })
+      ]
     });
     this.props.navigation.dispatch(resetAction);
   }
@@ -164,7 +187,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    authenticate: state.authenticate
+    authenticate: state.authenticate,
+    branches: state.branches
   };
 };
 

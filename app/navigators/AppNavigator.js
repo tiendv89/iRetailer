@@ -5,20 +5,16 @@ import { connect } from 'react-redux';
 import { scaleStyle } from '../utils/scaleUIStyle';
 import HomeScreen from '../containers/HomeScreen';
 import InitializeStoreScreen from '../containers/InitializeStoreScreen';
-import MainScreen from '../containers/MainScreen';
-
+import RetailerWithNavigationState from '../navigators/RetailerNavigator';
 export const AppNavigator = StackNavigator(
   {
     Home: { screen: HomeScreen },
     InitializeStore: { screen: InitializeStoreScreen },
-    Main: { screen: MainScreen }
+    Retailer: { screen: RetailerWithNavigationState }
   },
   {
     initialRouteName: 'Home',
-    navigationOptions: {
-      headerStyle: scaleStyle({ height: 96 })
-    },
-    cardStyle: { backgroundColor: '#ffffff' }
+    headerMode: 'none'
   }
 );
 

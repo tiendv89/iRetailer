@@ -10,9 +10,15 @@ import {
 import { scaleStyleSheet } from '../utils/scaleUIStyle';
 import fonts from '../utils/fonts';
 import config from '../config';
-import { getStoreDetail } from '../store/stores/actions';
+import { getStoreDetail } from '../store/shops/action';
+import { Icon } from 'react-native-elements';
 
 class MainScreen extends React.Component {
+  static navigationOptions = {
+    drawerLabel: 'Cửa hàng',
+    drawerIcon: ({ tintColor }) => <Icon name={'store'} />
+  };
+
   constructor(props) {
     super(props);
   }
