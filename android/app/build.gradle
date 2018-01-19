@@ -156,7 +156,9 @@ dependencies {
         transitive = false
     }
 
-    compile(project(":react-native-google-signin"))
+    compile(project(":react-native-google-signin")){
+        exclude group: "com.google.android.gms" // very important
+    }
 
     // RNFirebase required dependencies
     compile "com.google.firebase:firebase-core:11.8.0"
@@ -178,6 +180,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:26.0.2"
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile project(':react-native-vector-icons')
+    compile project(":react-native-ocr")
 }
 
 // Run this once to be able to run the application with BUCK

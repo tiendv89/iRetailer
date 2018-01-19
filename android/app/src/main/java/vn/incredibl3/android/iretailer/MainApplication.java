@@ -3,6 +3,7 @@ package vn.incredibl3.android.iretailer;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import vn.incredibl3.android.ocr.RNOCRPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.react.ReactNativeHost;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new RNOCRPackage(),
             new VectorIconsPackage(),
             new RNGoogleSigninPackage(),
         new RNFirebasePackage(),
